@@ -10,6 +10,12 @@ class NightShift : Form
     [DllImport("user32.dll")]
     static extern int SendMessage(int hWnd, int hMsg, int wParam, int lParam);
 
+    [DllImport("user32.dll")]
+    static extern bool SetProcessDPIAware();
+
+    [DllImport("shcore.dll")]
+    static extern int SetProcessDpiAwareness(int value);
+
     [DllImport("kernel32.dll")]
     static extern uint SetThreadExecutionState(uint esFlags);
 
@@ -144,6 +150,10 @@ class NightShift : Form
     [STAThread]
     static void Main()
     {
+        // Enable high-DPI awareness (try per-monitor first, fall back to system)
+        try { SetProcessDpiAwareness(2); } // 2 = Per-Monitor DPI Aware
+        catch { SetProcessDPIAware(); }
+
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         Application.Run(new NightShift());
