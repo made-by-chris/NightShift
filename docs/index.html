@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NightShift - Turn Off Your Monitors While AI Agents Work Overnight</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #1a1a2e;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 640px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .logo {
+      width: 128px;
+      height: 128px;
+      border-radius: 24px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 8px 32px rgba(108, 92, 231, 0.25);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .tagline {
+      font-size: 1.25rem;
+      color: #6c5ce7;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+
+    .description {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: #b0b0c0;
+      margin-bottom: 2.5rem;
+    }
+
+    .downloads {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 1.75rem;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      background: #6c5ce7;
+      color: #ffffff;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(108, 92, 231, 0.4);
+      background: #7e70eb;
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-icon {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .features {
+      text-align: left;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 2.5rem;
+      border: 1px solid rgba(108, 92, 231, 0.15);
+    }
+
+    .features h2 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6c5ce7;
+      margin-bottom: 1rem;
+    }
+
+    .features ul {
+      list-style: none;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .features li {
+      padding-left: 1.5rem;
+      position: relative;
+      color: #c0c0d0;
+      line-height: 1.5;
+    }
+
+    .features li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #6c5ce7;
+    }
+
+    footer {
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    footer a {
+      color: #808090;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    footer a:hover {
+      color: #6c5ce7;
+    }
+
+    @media (max-width: 480px) {
+      h1 { font-size: 1.8rem; }
+      .tagline { font-size: 1.05rem; }
+      .downloads { flex-direction: column; align-items: center; }
+      .btn { width: 100%; justify-content: center; }
+      .features { padding: 1.25rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://raw.githubusercontent.com/made-by-chris/NightShift/master/logo.png" alt="NightShift" class="logo">
+    <h1>NightShift</h1>
+    <p class="tagline">Turn off your monitors while AI agents work overnight</p>
+    <p class="description">
+      NightShift keeps your machine awake while letting your monitors sleep.
+      Perfect for running AI agents, long builds, or batch jobs overnight
+      without screen burn or wasted energy.
+    </p>
+
+    <div class="downloads">
+      <a href="https://github.com/made-by-chris/NightShift/releases/download/v1.0.1/NightShift.exe" class="btn">
+        <svg class="btn-icon" viewBox="0 0 24 24"><path d="M3 17v3c0 1.1.9 2 2 2h14a2 2 0 002-2v-3M8 12l4 4 4-4M12 2v14"/></svg>
+        Windows (.exe)
+      </a>
+      <a href="https://github.com/made-by-chris/NightShift/releases/download/v1.0.1/nightshift-mac.command" class="btn">
+        <svg class="btn-icon" viewBox="0 0 24 24"><path d="M3 17v3c0 1.1.9 2 2 2h14a2 2 0 002-2v-3M8 12l4 4 4-4M12 2v14"/></svg>
+        macOS (.command)
+      </a>
+      <a href="https://github.com/made-by-chris/NightShift/releases/download/v1.0.1/nightshift-linux.sh" class="btn">
+        <svg class="btn-icon" viewBox="0 0 24 24"><path d="M3 17v3c0 1.1.9 2 2 2h14a2 2 0 002-2v-3M8 12l4 4 4-4M12 2v14"/></svg>
+        Linux (.sh)
+      </a>
+    </div>
+
+    <div class="features">
+      <h2>Features</h2>
+      <ul>
+        <li>Prevents system sleep while monitors stay off</li>
+        <li>Perfect for overnight AI agent sessions</li>
+        <li>No screen burn or wasted energy from idle monitors</li>
+        <li>One-click setup, no configuration needed</li>
+        <li>Works on Windows, macOS, and Linux</li>
+      </ul>
+    </div>
+
+    <footer>
+      <a href="https://github.com/made-by-chris/NightShift">View on GitHub</a>
+    </footer>
+  </div>
+</body>
+</html>
