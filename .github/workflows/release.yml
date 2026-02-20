@@ -1,0 +1,37 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile NightShift.exe
+        shell: cmd
+        run: |
+          mkdir build
+          C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /r:System.Windows.Forms.dll /r:System.Drawing.dll /win32icon:nightshift.ico /out:build\NightShift.exe NightShift.cs
+
+      - name: Build Installer
+        shell: cmd
+        run: |
+          "%ProgramFiles(x86)%\Inno Setup 6\ISCC.exe" installer.iss
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            build/NightShift-Setup.exe
+            build/NightShift.exe
+            nightshift-mac.command
+            nightshift-linux.sh
+          generate_release_notes: true

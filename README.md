@@ -23,11 +23,12 @@ You kick off a long-running AI agent session — a multi-file refactor, an overn
 
 ## Download
 
-Grab the right file for your OS from the [latest release](../../releases/latest). No installation needed.
+Grab the right file for your OS from the [latest release](../../releases/latest).
 
 | Platform | File | How to run |
 |----------|------|------------|
-| **Windows** | `NightShift.exe` | Double-click it |
+| **Windows** | `NightShift-Setup.exe` | Run the installer |
+| **Windows** | `NightShift.exe` | Portable — just double-click |
 | **macOS** | `nightshift-mac.command` | Double-click it (may need to right-click > Open the first time) |
 | **Linux** | `nightshift-linux.sh` | `chmod +x nightshift-linux.sh && ./nightshift-linux.sh` |
 
@@ -36,17 +37,19 @@ Grab the right file for your OS from the [latest release](../../releases/latest)
 ### Windows
 
 1. Start your AI agents (Claude Code, OpenClaw, etc.)
-2. Run `NightShift.exe`
+2. Run `NightShift.exe` (or install via `NightShift-Setup.exe`)
 3. A crescent moon icon appears in your system tray
 4. Right-click and hit **Monitors Off + Stay Awake**
 5. Go to sleep — your agents keep working, your room stays dark
 6. Move your mouse in the morning to wake the monitors
-7. Right-click the tray icon and hit **Exit** when you're done
+7. A stats popup shows how long your monitors were off
+8. Right-click the tray icon and hit **Exit** when you're done
 
 **Tray menu:**
 - **Turn Off Monitors** — just the monitors
 - **Keep System Awake** — toggleable, prevents sleep
 - **Monitors Off + Stay Awake** — the bedtime combo
+- **Run on Startup** — toggleable, launches NightShift when Windows starts
 - **Exit** — restores normal power settings
 
 **Tip:** Left-click the tray icon anytime to quickly turn monitors off again.
@@ -73,6 +76,9 @@ Supports X11 (`xset`) and Wayland (`wlopm`, `swaymsg`). Uses `systemd-inhibit` t
 
 ## Features
 
+- **Sleep stats** — when your monitors wake up, a popup shows how long they were off
+- **Auto-start** — optionally launch NightShift on Windows startup
+- **Installer** — proper Windows installer, shows up in Start Menu and Windows Search
 - Zero dependencies — uses built-in OS tools
 - Tiny footprint, minimal resource usage
 - Monitors wake instantly when you move the mouse or press a key
@@ -83,13 +89,13 @@ Supports X11 (`xset`) and Wayland (`wlopm`, `swaymsg`). Uses `systemd-inhibit` t
 Requires .NET Framework 4.x (included with Windows).
 
 ```
-csc.exe /target:winexe /r:System.Windows.Forms.dll /r:System.Drawing.dll /out:NightShift.exe NightShift.cs
+csc.exe /target:winexe /r:System.Windows.Forms.dll /r:System.Drawing.dll /win32icon:nightshift.ico /out:NightShift.exe NightShift.cs
 ```
 
 Or using the full path to the compiler:
 
 ```
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /r:System.Windows.Forms.dll /r:System.Drawing.dll /out:NightShift.exe NightShift.cs
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /r:System.Windows.Forms.dll /r:System.Drawing.dll /win32icon:nightshift.ico /out:NightShift.exe NightShift.cs
 ```
 
 ## License
