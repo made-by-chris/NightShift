@@ -10,12 +10,16 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 class NightShift : Form
 {
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
     [DllImport("user32.dll")]
-    static extern int SendMessage(int hWnd, int hMsg, int wParam, int lParam);
+    static extern bool DestroyIcon(IntPtr hIcon);
 
     [DllImport("user32.dll")]
     static extern bool SetProcessDPIAware();
@@ -28,10 +32,16 @@ class NightShift : Form
 
     const uint ES_CONTINUOUS      = 0x80000000;
     const uint ES_SYSTEM_REQUIRED = 0x00000001;
+    const int WM_SYSCOMMAND = 0x0112;
+    const int SC_MONITORPOWER = 0xF170;
+    static readonly IntPtr HWND_BROADCAST = new IntPtr(0xFFFF);
+    static readonly IntPtr MONITOR_OFF = new IntPtr(2);
 
     private NotifyIcon trayIcon;
     private ToolStripMenuItem keepAwakeItem;
+    private ContextMenuStrip trayMenu;
     private bool keepAwake = false;
+    private IntPtr fallbackIconHandle = IntPtr.Zero;
 
     public NightShift()
     {
@@ -48,20 +58,20 @@ class NightShift : Form
 
         keepAwakeItem = new ToolStripMenuItem("Keep System Awake", null, OnToggleAwake);
 
-        var menu = new ContextMenuStrip();
-        menu.Items.Add(new ToolStripMenuItem("Night Shift") { Enabled = false });
-        menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add(new ToolStripMenuItem("Turn Off Monitors", null, OnMonitorsOff));
-        menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add(keepAwakeItem);
-        menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add(new ToolStripMenuItem("Monitors Off + Stay Awake", null, OnBoth));
-        menu.Items.Add(new ToolStripSeparator());
-        menu.Items.Add(new ToolStripMenuItem("Exit", null, OnExit));
+        trayMenu = new ContextMenuStrip();
+        trayMenu.Items.Add(new ToolStripMenuItem("Night Shift") { Enabled = false });
+        trayMenu.Items.Add(new ToolStripSeparator());
+        trayMenu.Items.Add(new ToolStripMenuItem("Turn Off Monitors", null, OnMonitorsOff));
+        trayMenu.Items.Add(new ToolStripSeparator());
+        trayMenu.Items.Add(keepAwakeItem);
+        trayMenu.Items.Add(new ToolStripSeparator());
+        trayMenu.Items.Add(new ToolStripMenuItem("Monitors Off + Stay Awake", null, OnBoth));
+        trayMenu.Items.Add(new ToolStripSeparator());
+        trayMenu.Items.Add(new ToolStripMenuItem("Exit", null, OnExit));
 
-        trayIcon.ContextMenuStrip = menu;
+        trayIcon.ContextMenuStrip = trayMenu;
 
-        trayIcon.MouseClick += delegate(object s, MouseEventArgs e) {
+        trayIcon.MouseClick += delegate(object? s, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left)
                 ScheduleMonitorsOff();
         };
@@ -72,12 +82,12 @@ class NightShift : Form
         trayIcon.ShowBalloonTip(3000);
     }
 
-    void OnMonitorsOff(object s, EventArgs e)
+    void OnMonitorsOff(object? s, EventArgs e)
     {
         ScheduleMonitorsOff();
     }
 
-    void OnToggleAwake(object s, EventArgs e)
+    void OnToggleAwake(object? s, EventArgs e)
     {
         keepAwake = !keepAwake;
         keepAwakeItem.Checked = keepAwake;
@@ -88,7 +98,7 @@ class NightShift : Form
         trayIcon.Text = keepAwake ? "Night Shift (Awake)" : "Night Shift";
     }
 
-    void OnBoth(object s, EventArgs e)
+    void OnBoth(object? s, EventArgs e)
     {
         keepAwake = true;
         keepAwakeItem.Checked = true;
@@ -97,10 +107,19 @@ class NightShift : Form
         ScheduleMonitorsOff();
     }
 
-    void OnExit(object s, EventArgs e)
+    void OnExit(object? s, EventArgs e)
     {
         SetThreadExecutionState(ES_CONTINUOUS);
         trayIcon.Visible = false;
+        trayMenu?.Dispose();
+        trayIcon.Dispose();
+
+        if (fallbackIconHandle != IntPtr.Zero)
+        {
+            DestroyIcon(fallbackIconHandle);
+            fallbackIconHandle = IntPtr.Zero;
+        }
+
         Application.Exit();
     }
 
@@ -111,12 +130,16 @@ class NightShift : Form
         timer.Tick += delegate {
             timer.Stop();
             timer.Dispose();
-            SendMessage(-1, 0x0112, 0xF170, 2);
+            SendMessage(
+                HWND_BROADCAST,
+                WM_SYSCOMMAND,
+                new IntPtr(SC_MONITORPOWER),
+                MONITOR_OFF);
         };
         timer.Start();
     }
 
-    static Icon LoadIcon()
+    Icon LoadIcon()
     {
         // Try to load the .ico file from next to the exe
         string exeDir = AppContext.BaseDirectory;
@@ -144,7 +167,9 @@ class NightShift : Form
                 g.FillEllipse(brush, 26, 14, 2, 2);
             }
         }
-        return Icon.FromHandle(bmp.GetHicon());
+        fallbackIconHandle = bmp.GetHicon();
+        bmp.Dispose();
+        return (Icon)Icon.FromHandle(fallbackIconHandle).Clone();
     }
 
     protected override void SetVisibleCore(bool value)
@@ -155,6 +180,17 @@ class NightShift : Form
     [STAThread]
     static void Main()
     {
+        using var singleInstanceMutex = new Mutex(true, "Local\\NightShift.SingleInstance", out bool createdNew);
+        if (!createdNew)
+        {
+            MessageBox.Show(
+                "Night Shift is already running.",
+                "Night Shift",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+            return;
+        }
+
         // Enable high-DPI awareness (try per-monitor first, fall back to system)
         try { SetProcessDpiAwareness(2); } // 2 = Per-Monitor DPI Aware
         catch { SetProcessDPIAware(); }
