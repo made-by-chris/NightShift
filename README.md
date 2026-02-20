@@ -80,16 +80,18 @@ Supports X11 (`xset`) and Wayland (`wlopm`, `swaymsg`). Uses `systemd-inhibit` t
 
 ## Building from Source (Windows)
 
-Requires .NET Framework 4.x (included with Windows).
+Requires .NET 10 SDK.
+
+On Windows, you can also double-click `build.cmd` for one-click publishing.
 
 ```
-csc.exe /target:winexe /r:System.Windows.Forms.dll /r:System.Drawing.dll /out:NightShift.exe NightShift.cs
+dotnet run .\NightShift.cs
 ```
 
-Or using the full path to the compiler:
+To publish a standalone executable:
 
 ```
-C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /target:winexe /r:System.Windows.Forms.dll /r:System.Drawing.dll /out:NightShift.exe NightShift.cs
+dotnet publish .\NightShift.cs -r win-x64 -c Release
 ```
 
 ## License

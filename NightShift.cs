@@ -1,3 +1,10 @@
+#:sdk Microsoft.NET.Sdk
+#:property TargetFramework=net10.0-windows
+#:property UseWindowsForms=true
+#:property UseSystemDrawing=true
+#:property OutputType=WinExe
+#:property PublishTrimmed=false
+
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -23,7 +30,7 @@ class NightShift : Form
     const uint ES_SYSTEM_REQUIRED = 0x00000001;
 
     private NotifyIcon trayIcon;
-    private MenuItem keepAwakeItem;
+    private ToolStripMenuItem keepAwakeItem;
     private bool keepAwake = false;
 
     public NightShift()
@@ -39,21 +46,20 @@ class NightShift : Form
         this.Icon = trayIcon.Icon;
         trayIcon.Visible = true;
 
-        keepAwakeItem = new MenuItem("Keep System Awake", OnToggleAwake);
+        keepAwakeItem = new ToolStripMenuItem("Keep System Awake", null, OnToggleAwake);
 
-        var menu = new ContextMenu(new MenuItem[] {
-            new MenuItem("Night Shift") { Enabled = false },
-            new MenuItem("-"),
-            new MenuItem("Turn Off Monitors", OnMonitorsOff),
-            new MenuItem("-"),
-            keepAwakeItem,
-            new MenuItem("-"),
-            new MenuItem("Monitors Off + Stay Awake", OnBoth),
-            new MenuItem("-"),
-            new MenuItem("Exit", OnExit)
-        });
+        var menu = new ContextMenuStrip();
+        menu.Items.Add(new ToolStripMenuItem("Night Shift") { Enabled = false });
+        menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add(new ToolStripMenuItem("Turn Off Monitors", null, OnMonitorsOff));
+        menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add(keepAwakeItem);
+        menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add(new ToolStripMenuItem("Monitors Off + Stay Awake", null, OnBoth));
+        menu.Items.Add(new ToolStripSeparator());
+        menu.Items.Add(new ToolStripMenuItem("Exit", null, OnExit));
 
-        trayIcon.ContextMenu = menu;
+        trayIcon.ContextMenuStrip = menu;
 
         trayIcon.MouseClick += delegate(object s, MouseEventArgs e) {
             if (e.Button == MouseButtons.Left)
@@ -100,7 +106,7 @@ class NightShift : Form
 
     void ScheduleMonitorsOff()
     {
-        var timer = new Timer();
+        var timer = new System.Windows.Forms.Timer();
         timer.Interval = 500;
         timer.Tick += delegate {
             timer.Stop();
@@ -113,8 +119,7 @@ class NightShift : Form
     static Icon LoadIcon()
     {
         // Try to load the .ico file from next to the exe
-        string exeDir = Path.GetDirectoryName(
-            System.Reflection.Assembly.GetExecutingAssembly().Location);
+        string exeDir = AppContext.BaseDirectory;
         string icoPath = Path.Combine(exeDir, "nightshift.ico");
 
         if (File.Exists(icoPath))
