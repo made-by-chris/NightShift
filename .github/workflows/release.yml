@@ -31,7 +31,6 @@ jobs:
         with:
           files: |
             build/NightShift-Setup.exe
-            build/NightShift.exe
             nightshift-mac.command
             nightshift-linux.sh
           generate_release_notes: true

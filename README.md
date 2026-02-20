@@ -28,7 +28,6 @@ Grab the right file for your OS from the [latest release](../../releases/latest)
 | Platform | File | How to run |
 |----------|------|------------|
 | **Windows** | `NightShift-Setup.exe` | Run the installer |
-| **Windows** | `NightShift.exe` | Portable — just double-click |
 | **macOS** | `nightshift-mac.command` | Double-click it (may need to right-click > Open the first time) |
 | **Linux** | `nightshift-linux.sh` | `chmod +x nightshift-linux.sh && ./nightshift-linux.sh` |
 
@@ -37,7 +36,7 @@ Grab the right file for your OS from the [latest release](../../releases/latest)
 ### Windows
 
 1. Start your AI agents (Claude Code, OpenClaw, etc.)
-2. Run `NightShift.exe` (or install via `NightShift-Setup.exe`)
+2. Install and run `NightShift-Setup.exe`
 3. A crescent moon icon appears in your system tray
 4. Right-click and hit **Monitors Off + Stay Awake**
 5. Go to sleep — your agents keep working, your room stays dark
